@@ -1,0 +1,89 @@
+  @tailwind base;
+
+@layer base {
+  button,
+  [type='button'],
+  [type='reset'],
+  [type='submit'] {
+    background: none;
+  }
+}
+
+@tailwind components;
+
+@layer base {
+  @font-face {
+    font-family: 'Satoshi12px';
+    src: url('./fonts/Satoshi-Regular.woff2') format('woff2');
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  @font-face {
+    font-family: 'Satoshi14px';
+    src: url('./fonts/Satoshi-Regular.woff2') format('woff2');
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  @font-face {
+    font-family: 'Satoshi16px';
+    src: url('./fonts/Satoshi-Regular.woff2') format('woff2');
+    font-size: 16px;
+    line-height: 24px;
+  }
+
+  @font-face {
+    font-family: 'Satoshi20px';
+    src: url('./fonts/Satoshi-Bold.woff2') format('woff2');
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  @font-face {
+    font-family: 'Satoshi24px';
+    src: url('./fonts/Satoshi-Bold.woff2') format('woff2');
+    font-display: swap;
+    font-size: 24px;
+    line-height: 32px;
+  }
+}
+
+@tailwind utilities;
+
+@layer utilities {
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .word-spacing-16 {
+    word-spacing: 16px;
+  }
+
+  .break-word {
+    word-break: break-word;
+  }
+}
+
+.dark body {
+  background-color: #000000;
+}
+
+body {
+  font-family: 'Satoshi16px';
+  background-color: #e5e5e5;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+::-webkit-scrollbar {
+  width: 0;
+}
+
+::-webkit-scrollbar-corner {
+  display: none;
+}
