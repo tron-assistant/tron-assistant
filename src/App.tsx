@@ -1,9 +1,55 @@
 import { useState, useEffect, KeyboardEvent, useRef } from "react";
 import React from "react";
 import { IconButton, LinearProgress, Tooltip } from "@mui/material";
+import hljs from "highlight.js";
+import { Renderer, marked } from "marked";
+import htmlBeautify from "html-beautify";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
+type AIAnswer = {
+  answer: string | null,
+  source_documents: string[] | null
+}
 
+type Question = {
+  question: string
+}
+
+type Message = AIAnswer & Question
+
+const parser = (text: string) => {
+  let renderer = new Renderer();
+  renderer.paragraph = (text) => {
+    return text.replace(/(?:\r\n|\r|\n)/g, "<br>") + "\n";
+  };
+  renderer.list = (text) => {
+    return `${text.replace(/(?:\r\n|\r|\n)/g, "<br>")}\n\n`;
+  };
+  renderer.listitem = (text) => {
+    return `\n• ${text.replace(/(?:\r\n|\r|\n)/g, "<br>")}`;
+  };
+  renderer.code = (code, language) => {
+    const validLanguage = hljs.getLanguage(language || "")
+      ? language
+      : "plaintext";
+    const highlightedCode = hljs.highlight(
+      validLanguage || "plaintext",
+      code
+    ).value;
+    return `<pre class="highlight bg-gray-700" style="padding: 5px; border-radius: 5px; overflow: auto; overflow-wrap: anywhere; white-space: pre-wrap; max-width: 100%; display: block; line-height: 1.2"><code class="${language}" style="color: #d6e2ef; font-size: 12px; ">${highlightedCode}</code></pre>`;
+  };
+  marked.setOptions({ renderer });
+  return marked(text);
+}
+
+const ChatGPTResponseFormatter = (response: string) => {
+  const parsedResponse = parser(response);
+  const beautifiedResponse = htmlBeautify(parsedResponse);
+
+  return (
+    <div dangerouslySetInnerHTML={{ __html: parsedResponse }} />
+  );
+};
 
 function App() {
   const [prompt, updatePrompt] = useState(undefined);
@@ -82,8 +128,23 @@ function App() {
                 msg.answer ?
                   <>
                     <div className="py-2 text-gray-500">
-                      {msg.answer}
+                      {ChatGPTResponseFormatter(msg.answer)}
                     </div>
+                    {msg.source_documents &&
+                      <div className="flex items-center gap-2 my-3 text-sm">
+                        <div className="font-black">Read More:</div>
+                        {
+                          msg.source_documents.map((s, ii) => {
+                
+                            return <Tooltip key={"source-doc-" + i.toString() + ii.toString()} title={s}><a
+                              href={s}
+                              target="_blank"
+                              className="px-2 py-1 hover:underline cursor-pointer no-underline text-black bg-gray-50 border-[1px] border-gray-200 rounded hover:bg-gray-100 hover:border-gray-400"
+                            >
+                              {s.split('/')[s.split('/').length - 1]}
+                            </a></Tooltip>
+                          })
+                        }
                         <div className="self-end">
                           <IconButton
                             onClick={() => {
